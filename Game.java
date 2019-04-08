@@ -18,7 +18,7 @@
 public class Game 
 {
     private Parser parser;
-    private Room currentRoom;
+    private Room currentRoom,lobby2;
         
     /**
      * Create the game and initialise its internal map.
@@ -34,30 +34,51 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
+        Room lobby1,lobby1V2,storageRoom, 
+        maintenanceRoom, lab, office,elevator,elevatorShaft,hall1,
+        lounge,bathroom,stairwell,buildingExterior,maintenanceRoomV2,
+        hall2,hall1v2,hall2v2,managerOffice,basement;
       
         // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
+        // DESC,North,East,South,West
+        lobby1 = new Room("lobby outside the elevators");
+        lobby2 = new Room("lobby outside the elevators on the second floor");
+        storageRoom = new Room("in the storage room");
+        maintenanceRoom = new Room("in the maintenance room");
+        lab = new Room("in the explosives lab");
+        managerOffice = new Room("in the manager's office");
+        office = new Room("in the main offices");
+        elevator = new Room("in the elevator");
+        elevatorShaft = new Room("in the elevator shaft");
+        buildingExterior = new Room("outside the building");
+        lounge = new Room("in the employee's lounge");
+        hall1 = new Room("in the hallway");
+        hall2 = new Room("in the hallway");
+        bathroom = new Room("in the bathroom");
+        basement = new Room("in the basement");
+        stairwell = new Room("in the stairwell to the second floor");
+
+        lobby1.setAllExits(elevatorShaft,buildingExterior,hall1,maintenanceRoom);
+        lobby2.setAllExits(null,buildingExterior,office,stairwell);
+        storageRoom.setAllExits(hall1,null,null,null);
+        maintenanceRoom.setAllExits(null,lobby1,null,null);
+        lab.setAllExits(buildingExterior,buildingExterior,null,hall1);
+        office.setAllExits(lounge,hall1,null,null);
+        elevator.setAllExits(null,null,lobby1,null);
+        elevatorShaft.setAllExits(null,null,lobby1,null);
+        buildingExterior.setAllExits(null,null,null,lobby1);
+        buildingExterior.setVerticalDirections(lobby2,null);
+        lounge.setAllExits(null,hall1,null,stairwell);
+        hall1.setAllExits(lobby1,lab,hall2,lounge);
+        hall2.setAllExits(hall1,bathroom,storageRoom,managerOffice);
+        office.setAllExits(lobby2,null,null,managerOffice);
+        basement.setAllExits(null,null,null,null);
+        basement.setVerticalDirections(stairwell,null);
+        bathroom.setAllExits(null,null,null,hall2);
+        stairwell.setAllExits(null,null,null,hall2);
+        stairwell.setVerticalDirections(lobby2,basement);
         
-        // initialise room exits
-        outside.setExit("east", theater);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
-
-        theater.setExit("west", outside);
-
-        pub.setExit("east", outside);
-
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
-
-        office.setExit("west", lab);
-
-        currentRoom = outside;  // start game outside
+        currentRoom = lobby1;  // start game lobby
     }
 
     /**
@@ -84,8 +105,8 @@ public class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome to the World of Zuul!");
-        System.out.println("World of Zuul is a new, incredibly boring adventure game.");
+        System.out.println("Yesterday you found out your coworker took an embarrassing picture of you at the christmas party.");
+        System.out.println("You need to break into the office and steal the picture from his desk before he can expose you!");
         System.out.println("Type '" + CommandWord.HELP + "' if you need help.");
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
@@ -155,7 +176,9 @@ public class Game
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
 
-        if (nextRoom == null) {
+        if (nextRoom == null && currentRoom == lobby2 && direction == "north"){
+            System.out.println("The elevator doors closed!");
+        }else if (nextRoom == null) {
             System.out.println("There is no door!");
         }
         else {

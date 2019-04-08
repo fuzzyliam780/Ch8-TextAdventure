@@ -42,6 +42,18 @@ public class Room
     {
         exits.put(direction, neighbor);
     }
+    
+    public void setAllExits(Room north,Room east,Room south, Room west){
+        setExit("north",north);
+        setExit("south",south);
+        setExit("east",east);
+        setExit("west",west);
+    }
+    
+    public void setVerticalDirections(Room up,Room down){
+        setExit("up",up);
+        setExit("down",down);
+    }
 
     /**
      * @return The short description of the room
