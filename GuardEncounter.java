@@ -6,6 +6,10 @@ import java.util.Scanner;
  */
 public class GuardEncounter {
     Scanner scan = new Scanner(System.in);
+    Inventory inv = new Inventory();
+    Game game = new Game();
+    boolean isGreetingOver;
+    
     
     public GuardEncounter(int guard) {
         switch(guard){
@@ -22,7 +26,15 @@ public class GuardEncounter {
     }
     
     private void guardEncounter_Grant(){
-        
+        if (isGreetingOver == false){
+        System.out.println("Guard Grant: Hey, what are you doing here today?\n"
+                            + "You: Oh, I just forgot something from my desk.\n"
+                            + "Guard Grant: Right... Listen if you can be me some coffee from the employee lounge then I'll let you into the offices.");
+             isGreetingOver = true;
+        }
+        if (inv.hasCoffee()==true){
+            System.out.println("Guard Grant: Oh good you got it, head on in!");
+        }
     }
     
     private void guardEncounter_Edwards(){

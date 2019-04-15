@@ -7,12 +7,13 @@ import java.util.Random;
 public class Inventory {
     double maxCarryCapacity = 25.0;
     double carryCapacity = 0.01;
-    boolean maintenanceRoomKey,labKeycard,crowbar,smallExplosive,largeExplosive,doorCodeNote,laserCutter;
+    boolean maintenanceRoomKey,coffee,labKeycard,crowbar,smallExplosive,largeExplosive,doorCodeNote,laserCutter;
     int paperclip;
     Random rng = new Random();
     
     public Inventory(){
         maintenanceRoomKey = false;
+        coffee = false;
         labKeycard = false;
         paperclip = 1;
         crowbar = false;
@@ -22,11 +23,21 @@ public class Inventory {
         laserCutter = false;
     }
     
+    public boolean hasCoffee(){
+        return coffee;
+    }
+    
     public boolean tryToPickUpItem(String itemName){
         boolean wasItemPickedUp = false;
         switch (itemName){
             case "maintenanceRoomKey":
                 if (maintenanceRoomKey == false && carryCapacity+0.01 <= maxCarryCapacity){
+                    wasItemPickedUp = true;
+                    obtainItem(itemName);
+                }
+                break;
+            case "coffee":
+                if (coffee == false && carryCapacity+0.30 <= maxCarryCapacity){
                     wasItemPickedUp = true;
                     obtainItem(itemName);
                 }
@@ -84,6 +95,18 @@ public class Inventory {
                     return true;
                 }
                 break;
+            case "coffee":
+                if (coffee == true){
+                    useItem(itemName);
+                    return true;
+                }
+                break;
+            case "labKeycard":
+                if (labKeycard == true){
+                    useItem(itemName);
+                    return true;
+                }
+                break;
             case "largeExplosive":
                 if (largeExplosive == true){
                     useItem(itemName);
@@ -114,6 +137,7 @@ public class Inventory {
                         useItem(itemName);
                         return true;
                     }else{
+                        useItem(itemName);
                         System.out.println("The paperclip broke!");
                     }
                 }
@@ -128,6 +152,11 @@ public class Inventory {
                 maintenanceRoomKey = true;
                 carryCapacity += 0.03;
                 System.out.println("You picked up the Maintenance Room Key!");
+                break;
+            case "coffee":
+                coffee = true;
+                carryCapacity += 0.30;
+                System.out.println("You picked up the coffee!");
                 break;
             case "labKeycard":
                 labKeycard = true;
@@ -174,6 +203,11 @@ public class Inventory {
                 carryCapacity -= 0.03;
                 System.out.println("You used the Maintenance Room Key!");
                 break;
+            case "coffee":
+                coffee = false;
+                carryCapacity -= 0.30;
+                System.out.println("You gave Grant the coffee!");
+                break;
             case "labKeycard":
                 labKeycard = false;
                 carryCapacity -= 0.03;
@@ -215,28 +249,31 @@ public class Inventory {
     public void showInventory(){
         System.out.println("Inventory:----------------------------------\nCarry Capacity: "+carryCapacity+"/"+maxCarryCapacity);
         if (maintenanceRoomKey == true){
-            System.out.println("Maintenance Room Key");
+            System.out.println("Maintenance Room Key: A key to the maintenance room");
         }
         if (labKeycard == true){
-            System.out.println("Lab Keycard");
+            System.out.println("Lab Keycard: A keycard to the prototype lab");
+        }
+        if (coffee == true){
+            System.out.println("Coffee: A cup of coffee");
         }
         if (smallExplosive == true){
-            System.out.println("Small Explosive");
+            System.out.println("Small Explosive: A small explosive that can be used to open doors");
         }
         if (largeExplosive == true){
-            System.out.println("Large Explosive");
+            System.out.println("Large Explosive: A large explosive that could be used to destroy a large object");
         }
         if (laserCutter == true){
-            System.out.println("Laser Cutter");
+            System.out.println("Laser Cutter: A laser cutter that could open a lock");
         }
-        if (largeExplosive == true){
-            System.out.println("Large Explosive");
+        if (doorCodeNote == true){
+            System.out.println("Door Code Note: The code for the 2nd floor security door is 959");
         }
         if (crowbar == true){
-            System.out.println("Crowbar");
+            System.out.println("Crowbar: A crowbar that could be used to pry open a door");
         }
         if (paperclip > 0){
-            System.out.println("Paperclip: " + paperclip);
+            System.out.println("Paperclip: " + paperclip+": Paperclips can be used to pick a door lock");
         }
         System.out.println("--------------------------------------------");
     }
