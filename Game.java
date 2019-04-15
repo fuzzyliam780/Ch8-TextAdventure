@@ -531,7 +531,7 @@ public class Game
         
         if (currentRoom == lab){
             switch (itemToInteractWith){
-                case "explosive synthesizer":
+                case "explosive":
                     if (hasExplosive == false){
                         System.out.println("This machine is designed to fabricate an explosive charge.\nWhat size of charge would you like, small or large?");  
                         response = scan.nextLine().trim().toLowerCase();
