@@ -1,4 +1,3 @@
-
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -23,7 +22,7 @@ import java.util.Scanner;
 public class Game 
 {
     private Parser parser;
-    private Room currentRoom,previousRoom,lobby2,lobby1,lobby1V2,storageRoom, 
+    private Room currentRoom,lobby2,lobby1,lobby1V2,storageRoom, 
         maintenanceRoom, lab, office,elevator,elevatorShaft,hall1,
         lounge,bathroom,stairwell,buildingExterior,maintenanceRoomV2,
         hall2,hall1v2,hall2v2,managerOffice,basement,coworkerRoom;
@@ -34,6 +33,7 @@ public class Game
     private boolean elevatorOn = false, guardAtDoor,maintenanceRoomDoorUnlocked = false;
     private int guard;
     private ArrayList<Room> rooms = new ArrayList<>();
+    private ArrayList<Room> previousRooms = new ArrayList<>();
     /**
      * Create the game and initialise its internal map.
      */
@@ -97,7 +97,6 @@ public class Game
         stairwell.setVerticalDirections(lobby2,basement);
         coworkerRoom.setAllExits(office,null,null,null);
         
-        previousRoom = null;
         currentRoom = lobby1;  // start game lobby
         inv = new Inventory();
         
@@ -192,7 +191,7 @@ public class Game
                 break;
 
             case BACK:
-                back();
+                back(command);
                 break;
 
             case GRAB:
@@ -245,13 +244,12 @@ public class Game
         }else if (nextRoom == null) {
             System.out.println("I cannot go that way!");
         }else if (direction.equals("north") && currentRoom == lobby2 && elevatorOn == true){
-            previousRoom = elevator;
             currentRoom = lobby2;
             System.out.println(currentRoom.getLongDescription());
         }else if (direction.equals("west") && currentRoom == lobby1 && maintenanceRoomDoorUnlocked == false){
             unlockMaintenanceDoor(direction,nextRoom);
         }else {
-            previousRoom = currentRoom;
+            previousRooms.add(currentRoom);
             currentRoom = nextRoom;
             System.out.println(currentRoom.getLongDescription());
         }
@@ -407,13 +405,32 @@ public class Game
                 + "the only way out is to my east\n"
                 + "There is a key and note on the desk that can be grabbed");
                 break;
+            case "office":
+                System.out.println("I'm the main office\n"
+                + "the only way out is to my east\n"
+                + "There is a key and note on the desk that can be grabbed");
+                break;
             }
     }
     
-    private void back(){
-        currentRoom = previousRoom;
-        previousRoom = null;
-        System.out.println(currentRoom.getLongDescription());
+    private void back(Command command){
+        if(!command.hasSecondWord()) {
+            if (previousRooms.size() == 1){
+                currentRoom = previousRooms.get(previousRooms.size()-1);
+            }else{
+                System.out.println("No where to go back to.");
+            }
+        }
+        
+        if (command.hasSecondWord()){
+            int roomsToGoBack = Integer.parseInt(command.getSecondWord());
+            if (previousRooms.size() >= roomsToGoBack){
+                currentRoom = previousRooms.get(previousRooms.size()-roomsToGoBack);
+                System.out.println(currentRoom.getLongDescription());
+            }else{
+            System.out.println("Cannot go back that far!");
+            }
+        }
     }
     
     private void grab(Command command){

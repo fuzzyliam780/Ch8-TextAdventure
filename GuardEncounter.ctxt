@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=GuardEncounter
+comment0.text=\r\n\r\n\ @author\ Liam\r\n
+comment1.params=guard
+comment1.target=GuardEncounter(int)
+comment2.params=
+comment2.target=void\ guardEncounter_Grant()
+comment3.params=
+comment3.target=void\ guardEncounter_Edwards()
+comment4.params=
+comment4.target=void\ guardEncounter_Thomas()
+numComments=5
