@@ -14,24 +14,40 @@ public class localisationLoader
     // instance variables - replace the example below with your own
     private FileReader file;
     private BufferedReader br;
+    private HashMap<String,String> commands = new HashMap<>();
 
     /**
      * Constructor for objects of class localisationLoader
+     * Loads all localisation files
      */
-    public localisationLoader()
-    {
-        loadEnglish();
+    public localisationLoader(){
     }
 
     /**
-     * An example of a method - replace this comment with your own
-     *
-     * @param  y  a sample parameter for a method
-     * @return    the sum of x and y
+     * Loads the english localisation file into the commands HashMap
+     * @return Returns the commands HashMap
+     * @throws FileNotFoundException
+     * @throws IOException
      */
-    public void loadEnglish()
+    public HashMap loadEnglish() throws FileNotFoundException,IOException 
     {
-        String directory = System.getProperty("user.home") + "\\Desktop\\Ch8-TextAdventure\\localisation\\english.txt";
+        String directory = "localisation\\english.txt";
+        String line;
+        FileReader reader = new FileReader(directory);
+        BufferedReader br = new BufferedReader(reader);
+        line = br.readLine();
+        commands.put("GO", line.substring(4,line.length()));
+        line = br.readLine();
+        commands.put("QUIT", line.substring(6,line.length()));
+        line = br.readLine();
+        commands.put("HELP", line.substring(6,line.length()));
+        line = br.readLine();
+        commands.put("UNKNOWN", line.substring(9,line.length()));
+        line = br.readLine();
+        commands.put("LOOK", line.substring(6,line.length()));
+        line = br.readLine();
+        commands.put("CLIMB", line.substring(7,line.length()));
         
+        return commands;
     }
 }

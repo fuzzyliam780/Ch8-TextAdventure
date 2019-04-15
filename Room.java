@@ -19,18 +19,25 @@ import java.util.Iterator;
 public class Room 
 {
     private String description;
+    private String name;
     private HashMap<String, Room> exits;        // stores exits of this room.
 
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
      * "an open court yard".
+     * @param name The room's name
      * @param description The room's description.
      */
-    public Room(String description) 
+    public Room(String name,String description) 
     {
+        this.name = name;
         this.description = description;
         exits = new HashMap<String, Room>();
+    }
+    
+    public String getName(){
+        return name;
     }
 
     /**
