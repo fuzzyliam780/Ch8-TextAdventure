@@ -7,7 +7,7 @@ import java.util.Scanner;
  */
 public class GuardEncounter {
     Scanner scan = new Scanner(System.in);
-    Inventory inv = new Inventory();
+    static Inventory inv = new Inventory();
     Game game = new Game();
     static boolean isGreetingOver = false, isEncounterOver = false;
     
@@ -19,8 +19,9 @@ public class GuardEncounter {
     /**
      * Player encounters guard grant outside of the main offices
      * @return Returns boolean indicating whether or not the security door is locked
+     * @param hasCoffee Does the player have a coffee for grant
      */
-    public boolean guardEncounter_Grant(){
+    public boolean guardEncounter_Grant(boolean hasCoffee){
         if (isGreetingOver == false && isEncounterOver == false){
         System.out.println("Guard Grant: Hey, what are you doing here today?\n"
                             + "You: Oh, I just forgot something from my desk.\n"
@@ -28,7 +29,7 @@ public class GuardEncounter {
              isGreetingOver = true;
         }
         
-        if (inv.hasCoffee()==true && isEncounterOver == false){
+        if (hasCoffee==true && isEncounterOver == false){
             System.out.println("Guard Grant: Oh good you got it, head on in!");
             isEncounterOver = true;
         }else {

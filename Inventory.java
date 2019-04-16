@@ -8,8 +8,8 @@ import java.util.Random;
 public class Inventory {
     double maxCarryCapacity = 25.0;
     double carryCapacity = 0.01;
-    boolean maintenanceRoomKey,coffee,labKeycard,crowbar,smallExplosive,largeExplosive,doorCodeNote,laserCutter;
-    int paperclip;
+    private boolean maintenanceRoomKey,coffee = false,labKeycard,crowbar,smallExplosive,largeExplosive,doorCodeNote,laserCutter;
+    private int paperclip;
     Random rng = new Random();
     
     /**
@@ -17,7 +17,6 @@ public class Inventory {
      */
     public Inventory(){
         maintenanceRoomKey = false;
-        coffee = false;
         labKeycard = false;
         paperclip = 1;
         crowbar = false;

@@ -231,7 +231,6 @@
      */
     private void goRoom(Command command) 
     {
-        ge = new GuardEncounter();
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
             System.out.println("Go where?");
@@ -281,7 +280,10 @@
                     System.out.println(currentRoom.getLongDescription());
                 }
             }else{
-                ge.guardEncounter_Grant();
+                if (ge == null){
+                    ge = new GuardEncounter();
+                }
+                ge.guardEncounter_Grant(inv.hasCoffee());
             }
         }else if (direction.equals("west") && currentRoom == lobby1 && maintenanceRoomDoorUnlocked == false){
             unlockMaintenanceDoor(direction,nextRoom);
