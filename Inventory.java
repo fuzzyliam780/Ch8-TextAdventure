@@ -2,7 +2,8 @@ import java.util.Random;
 
 /**
  *
- * @author Liam
+ * @author Liam Marquis
+ * @version 4/15/19
  */
 public class Inventory {
     double maxCarryCapacity = 25.0;
@@ -11,6 +12,9 @@ public class Inventory {
     int paperclip;
     Random rng = new Random();
     
+    /**
+     * Creates the players inventory
+     */
     public Inventory(){
         maintenanceRoomKey = false;
         coffee = false;
@@ -23,10 +27,18 @@ public class Inventory {
         laserCutter = false;
     }
     
+    /**
+     * checks if the player has picked up the coffee
+     */
     public boolean hasCoffee(){
         return coffee;
     }
     
+    /**
+     * player checks to see if they can pick up an item
+     * @param itemName the name of the item
+     * @return Returns whether or not the player was able to pick up the item
+     */
     public boolean tryToPickUpItem(String itemName){
         boolean wasItemPickedUp = false;
         switch (itemName){
@@ -59,6 +71,7 @@ public class Inventory {
                     wasItemPickedUp = true;
                     obtainItem(itemName);
                 }
+                break;
             case "largeExplosive":
                 if (largeExplosive == false && carryCapacity+6.00 <= maxCarryCapacity){
                     wasItemPickedUp = true;
@@ -87,6 +100,11 @@ public class Inventory {
         return wasItemPickedUp;
     }
     
+    /**
+     * Player checks to see if they can use an item
+     * @param itemName the name of the item
+     * @return Returns whether or not the player was able to use the item
+     */
     public boolean tryToUseItem(String itemName){
         switch (itemName){
             case "maintenanceRoomKey":
@@ -146,6 +164,10 @@ public class Inventory {
         return false;
     }
     
+    /**
+     * Player picks up an item
+     * @param itemName the name of the item
+     */
     private void obtainItem(String itemName){
         switch(itemName){
             case "maintenanceRoomKey":
@@ -176,7 +198,7 @@ public class Inventory {
             case "laserCutter":
                 laserCutter = true;
                 carryCapacity += 3.50;
-                System.out.println("You picked up the laser cutter!");
+                System.out.println("You picked up the LASERcutter!");
                 break;
             case "doorCodeNote":
                 doorCodeNote = true;
@@ -196,6 +218,10 @@ public class Inventory {
         }
     }
     
+    /**
+     * player uses an item
+     * @param itemName the name of the item
+     */
     public void useItem(String itemName){
         switch(itemName){
             case "maintenanceRoomKey":
@@ -226,7 +252,7 @@ public class Inventory {
             case "laserCutter":
                 laserCutter = false;
                 carryCapacity -= 3.50;
-                System.out.println("You used the small explosive!");
+                System.out.println("You used the LASERcutter!");
                 break;
             case "doorCodeNote":
                 doorCodeNote = false;
@@ -246,6 +272,9 @@ public class Inventory {
         }
     }
     
+    /**
+     * Shows the inventory of the player
+     */
     public void showInventory(){
         System.out.println("Inventory:----------------------------------\nCarry Capacity: "+carryCapacity+"/"+maxCarryCapacity);
         if (maintenanceRoomKey == true){
@@ -273,7 +302,7 @@ public class Inventory {
             System.out.println("Crowbar: A crowbar that could be used to pry open a door");
         }
         if (paperclip > 0){
-            System.out.println("Paperclip: " + paperclip+": Paperclips can be used to pick a door lock");
+            System.out.println("Paperclip: " + paperclip+": Paperclips have a 7/100 chance to pick a lock");
         }
         System.out.println("--------------------------------------------");
     }

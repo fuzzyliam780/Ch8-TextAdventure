@@ -2,47 +2,44 @@ import java.util.Scanner;
 
 /**
  *
- * @author Liam
+ * @author Liam Marquis
+ * @version 4/15/19
  */
 public class GuardEncounter {
     Scanner scan = new Scanner(System.in);
     Inventory inv = new Inventory();
     Game game = new Game();
-    boolean isGreetingOver;
+    boolean isGreetingOver = false, isEncounterOver = false;
     
-    
-    public GuardEncounter(int guard) {
-        switch(guard){
-            case 1:
-                guardEncounter_Grant();
-                break;
-            case 2:
-                guardEncounter_Edwards();
-                break;
-            case 3:
-                guardEncounter_Thomas();
-                break;
-        }
+    /**
+     * controls the encounter with guard grant
+     */
+    public GuardEncounter() {
     }
-    
-    private void guardEncounter_Grant(){
-        if (isGreetingOver == false){
+    /**
+     * Player encounters guard grant outside of the main offices
+     * @return Returns boolean indicating whether or not the security door is locked
+     */
+    public boolean guardEncounter_Grant(){
+        if (isGreetingOver == false && isEncounterOver == false){
         System.out.println("Guard Grant: Hey, what are you doing here today?\n"
                             + "You: Oh, I just forgot something from my desk.\n"
                             + "Guard Grant: Right... Listen if you can be me some coffee from the employee lounge then I'll let you into the offices.");
              isGreetingOver = true;
         }
-        if (inv.hasCoffee()==true){
+        
+        if (inv.hasCoffee()==true && isEncounterOver == false){
             System.out.println("Guard Grant: Oh good you got it, head on in!");
+            isEncounterOver = true;
+        }else {
+            System.out.println("Guard Grant: I'm not letting you in till I get my coffee!");
         }
-    }
-    
-    private void guardEncounter_Edwards(){
         
-    }
-    
-    private void guardEncounter_Thomas(){
-        
+        if (isEncounterOver == true){
+            return false;
+        }else{
+            return true;
+        }
     }
     
     

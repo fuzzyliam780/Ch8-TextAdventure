@@ -1,40 +1,44 @@
-import java.util.Random;
-import java.util.ArrayList;
-import java.util.Scanner;
-
-/**
- *  This class is the main class of the "World of Zuul" application. 
- *  "World of Zuul" is a very simple, text based adventure game.  Users 
- *  can walk around some scenery. That's all. It should really be extended 
- *  to make it more interesting!
- * 
- *  To play this game, create an instance of this class and call the "play"
- *  method.
- * 
- *  This main class creates and initialises all the others: it creates all
- *  rooms, creates the parser and starts the game.  It also evaluates and
- *  executes the commands that the parser returns.
- * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2011.08.10
- */
-
-public class Game 
-{
+    import java.util.Random;
+    import java.util.ArrayList;
+    import java.util.Scanner;
+    
+    /**
+     *  This class is the main class of the "World of Zuul" application. 
+     *  "World of Zuul" is a very simple, text based adventure game.  Users 
+     *  can walk around some scenery. That's all. It should really be extended 
+     *  to make it more interesting!
+     * 
+     *  To play this game, create an instance of this class and call the "play"
+     *  method.
+     * 
+     *  This main class creates and initialises all the others: it creates all
+     *  rooms, creates the parser and starts the game.  It also evaluates and
+     *  executes the commands that the parser returns.
+     * 
+     * @author  Michael Kölling and David J. Barnes
+     * @version 2011.08.10
+     * 
+     * @author Liam Marquis
+     * @version 4/15/2019
+     */
+    
+    public class Game 
+    {
     private Parser parser;
     private Room currentRoom,lobby2,lobby1,lobby1V2,storageRoom, 
         maintenanceRoom, lab, office,elevator,elevatorShaft,hall1,
         lounge,bathroom,stairwell,buildingExterior,maintenanceRoomV2,
         hall2,hall1v2,hall2v2,managerOffice,basement,coworkerRoom;
-    Random rng = new Random();
-    Scanner scan = new Scanner(System.in);
-    Inventory inv;
     private String response;
-    private boolean elevatorOn = false,elevatorDoorOpen=false,isGuardEncounterOver = false,guardAtDoor,pickedUpLabKeycard = false,
-    maintenanceRoomDoorUnlocked = false,labRoomDoorUnlocked = false, hasExplosive = false;
-    private int guard;
+    private boolean elevatorOn = false,elevatorDoorOpen=false,guardAtDoor,pickedUpLabKeycard = false,securityDoorLocked = true,
+        maintenanceRoomDoorUnlocked = false,labRoomDoorUnlocked = false, hasExplosive = false,paperclipPickedUp = false;
+    private int guard,teleporterCharges = 3;
     private ArrayList<Room> rooms = new ArrayList<>();
     private ArrayList<Room> previousRooms = new ArrayList<>();
+    Random rng = new Random();
+    Scanner scan = new Scanner(System.in);
+    Inventory inv = new Inventory();
+    GuardEncounter ge;
     /**
      * Create the game and initialise its internal map.
      */
@@ -42,10 +46,12 @@ public class Game
     {
         createRooms();
         parser = new Parser();
-    }
-
-    public void endGuardEncounterOver(){
-        isGuardEncounterOver = false;
+        guard = rng.nextInt(2);
+        if (guard == 0){
+            guardAtDoor = false;
+        }else{
+            guardAtDoor = true;
+        }
     }
     
     /**
@@ -53,20 +59,14 @@ public class Game
      */
     private void createRooms()
     {
-        guard = rng.nextInt(4);
-        if (guard == 0){
-            guardAtDoor = false;
-        }else{
-            guardAtDoor = true;
-        }
-      
+        
         // create the rooms
         // name,DESC
         lobby1 = new Room("lobby1","in the lobby outside the elevators");
         lobby2 = new Room("lobby2","in the lobby outside the elevators on the second floor");
         storageRoom = new Room("storageRoom","in the storage room");
         maintenanceRoom = new Room("maintenanceRoom","in the maintenance room");
-        lab = new Room("lab","in the explosives lab");
+        lab = new Room("lab","in the prototypes lab");
         managerOffice = new Room("managerOffice","in the manager's office");
         office = new Room("office","in the main offices");
         elevator = new Room("elevator","in the elevator");
@@ -104,7 +104,6 @@ public class Game
         coworkerRoom.setAllExits(office,null,null,null);
         
         currentRoom = lobby1;  // start game lobby
-        inv = new Inventory();
         
         rooms.add(lobby1);
         rooms.add(lobby2);
@@ -117,7 +116,6 @@ public class Game
         rooms.add(lounge);
         rooms.add(hall1);
         rooms.add(hall2);
-        rooms.add(lounge);
         rooms.add(office);
         rooms.add(basement);
         rooms.add(stairwell);
@@ -233,6 +231,7 @@ public class Game
      */
     private void goRoom(Command command) 
     {
+        ge = new GuardEncounter();
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
             System.out.println("Go where?");
@@ -249,8 +248,37 @@ public class Game
         }else if (nextRoom == null) {
             System.out.println("I cannot go that way!");
         }else if (direction.equals("north") && currentRoom == lobby2 && elevatorOn == true){
-            currentRoom = lobby2;
+            previousRooms.add(currentRoom);
+            currentRoom = elevator;
             System.out.println(currentRoom.getLongDescription());
+        }else if (direction.equals("north") && currentRoom == lobby1 && elevatorOn == true){
+            previousRooms.add(currentRoom);
+            currentRoom = elevator;
+            System.out.println(currentRoom.getLongDescription());
+        }else if (direction.equals("south") && currentRoom == lobby2){
+            if (guard == 0){
+                boolean correctCodeEntered = false;
+                if (securityDoorLocked == true){
+                    System.out.println("You try to open the office door, but it is locked! Would you like to try a code on the codepad?\nYes or No");
+                    response = scan.nextLine().trim().toLowerCase();
+                    if (response.equals("yes")){
+                        do{
+                            System.out.println("Please enter the 3-digit security code");
+                            int codeAttempt = Integer.parseInt(scan.nextLine());
+                            if (codeAttempt == 959){
+                                correctCodeEntered = true;
+                                securityDoorLocked = false;
+                            }
+                        }while (correctCodeEntered != true);
+                        previousRooms.add(currentRoom);
+                        currentRoom = nextRoom;
+                        labRoomDoorUnlocked = true;
+                        System.out.println(currentRoom.getLongDescription());
+                    }
+                }
+            }else{
+                ge.guardEncounter_Grant();
+            }
         }else if (direction.equals("west") && currentRoom == lobby1 && maintenanceRoomDoorUnlocked == false){
             unlockMaintenanceDoor(direction,nextRoom);
         }else if (direction.equals("east") && currentRoom == hall1 && labRoomDoorUnlocked == false){
@@ -261,6 +289,7 @@ public class Game
                     inv.tryToUseItem("labKeycard");
                     previousRooms.add(currentRoom);
                     currentRoom = nextRoom;
+                    labRoomDoorUnlocked = true;
                     System.out.println(currentRoom.getLongDescription());
                 }
             }else {
@@ -272,7 +301,11 @@ public class Game
             System.out.println(currentRoom.getLongDescription());
         }
     }
-    
+    /**
+     * Player trys to unlock the maintenance door through various methods
+     * @param direction The direct the player wants to go
+     * @param nextRoom The room the player want to go to
+     */
     private void unlockMaintenanceDoor(String direction,Room nextRoom){
         boolean result;
         System.out.println("You try to open the maintenance room door, but it is locked! Would you like to use an item\nYes or No");
@@ -332,6 +365,10 @@ public class Game
         System.out.println(currentRoom.getLongDescription());
     }
     
+    /**
+     * The player climbs to another room
+     * @param command The command the player entered
+     */
     private void climb(Command command){
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
@@ -378,7 +415,7 @@ public class Game
             case "lobby1":
                 System.out.println ("I'm in the 1st floor lobby\n"
                 + "The elevator door is closed to my north, but I could pry it open if I had a tool\n"
-                + "There is a window to the exterior of the building to my east, but I'd have to break the glass to get out there\n" 
+                + "There is an open window to the exterior of the building to my east\n" 
                 + "The hall is to the rest of the 1st floor is to my south\n" 
                 + "The elevator maintenance room is to my west, but the door is locked");
                 break;
@@ -404,7 +441,7 @@ public class Game
                 + "The 1st floor lobby is to my north\n"
                 + "The prototypes laboratory is to my east, but I'd need a keycard to get in\n"
                 + "The south half of the hallway is open to my south\n" 
-                + "The employee lounge is to my west"
+                + "The employee lounge is to my west\n"
                 + "There is a 'paperclip' on the ground I could grab");
                 break;
             case "hall2":
@@ -417,7 +454,7 @@ public class Game
             case "lab":
                 System.out.println("I'm in the prototypes lab\n"
                 + "the only way out is to my west\n"
-                + "There are several prototype devices around the lab including the teleporter,explosive synthesizer and a LASERcutter");
+                + "There are several prototype devices around the lab including the teleporter,explosive synthesizer and a portable LASERcutter");
                 break;
             case "managerOffice":
                 System.out.println("I'm in the manager's office\n"
@@ -433,7 +470,7 @@ public class Game
             case "elevator":
                 System.out.println("I'm in the elevator\n"
                 + "the only way out is to my east\n"
-                + "there is panel on the wall to control the elevator");
+                + "there is a 'panel' on the wall to control the elevator");
                 break;
             case "elevatorShaft":
                 System.out.println("I'm in the elevator shaft\n"
@@ -451,18 +488,18 @@ public class Game
                 break;
             case "stairwell":
                 System.out.println("I'm in the stairwell\n"
-                + "The second floor lobby is up the stairs"
-                + "The basement is down the stairs"
+                + "The second floor lobby is up the stairs\n"
+                + "The basement is down the stairs\n"
                 + "The employee lounge is to the east");
                 break;
             case "lounge":
                 System.out.println("I'm in the lounge\n"
                 + "The north half of the hall is to my east\n"
-                + "The stairwell is to my west");
+                + "The stairwell is to my west\n Interactable: coffeemachine");
                 break;
             case "buildingExterior":
                 System.out.println("I'm on the building exterior\n"
-                + "I can climb up to the second floor lobby"
+                + "I can climb up to the second floor lobby\n"
                 + "I can climb down to the 1st floor lobby");
                 break;
             case "coworkerRoom":
@@ -472,6 +509,10 @@ public class Game
             }
     }
     
+    /**
+     * The player goes back to the previous room
+     * @param command The command the player entered
+     */
     private void back(Command command){
         //go back by 1
         if(!command.hasSecondWord()) {
@@ -494,34 +535,59 @@ public class Game
         }
     }
     
+    /**
+     * The player tries to grab an item
+     * @param command The command the player tries to enter
+     */
     private void grab(Command command){
         if(!command.hasSecondWord()) {
             System.out.println("Grab what?");
             return;
         }
-        
+        boolean result;
         String itemToGrab = command.getSecondWord().trim().toLowerCase();
         
         if (currentRoom == managerOffice){
             switch (itemToGrab){
                 case "key":
-                    inv.tryToPickUpItem("maintenanceRoomKey");
+                    result = inv.tryToPickUpItem("maintenanceRoomKey");
+                    if (result == false){
+                        System.out.println("You already picked up the Maintenance Room Key");
+                    }
                     break;
                 case "note":
-                    inv.tryToPickUpItem("doorCodeNote");
+                    result = inv.tryToPickUpItem("doorCodeNote");
+                    if (result == false){
+                        System.out.println("You already picked up the door code note");
+                    }
                     break;
             }
         }else if (currentRoom == hall1 && itemToGrab.equals("paperclip")){
-            inv.tryToPickUpItem("paperclip");
+            if (paperclipPickedUp == false){
+                inv.tryToPickUpItem("paperclip");
+                paperclipPickedUp = true;
+            }else{
+                System.out.println("You already picked up the paperclip");
+            }
         }else if (currentRoom == storageRoom && itemToGrab.equals("crowbar")){
-            inv.tryToPickUpItem("crowbar");
+            result = inv.tryToPickUpItem("crowbar");
+            if (result == false){
+                System.out.println("You already picked up the crowbar");
+            }
         }else if (currentRoom == lab && itemToGrab.equals("lasercutter")){
-            inv.tryToPickUpItem("laserCutter");
+            result = inv.tryToPickUpItem("laserCutter");
+            if (result == false){
+                System.out.println("You already picked up the LASERcutter");
+            }
         }
     }
     
+    /**
+     * The player interacts with objects in a room
+     * @param command The command given by the player
+     */
     private void interact(Command command){
-        int teleporterCharges = 3;
+        
         if(!command.hasSecondWord()) {
             System.out.println("Interact with what?");
             return;
@@ -549,7 +615,7 @@ public class Game
                     break;
                 case "teleporter":
                     if (teleporterCharges > 0){
-                        System.out.println("This machine is designed to teleport a person around this building.\nWhich setting would you like to activate, fixed or random?");  
+                        System.out.println("This machine is designed to teleport a person around this building. It currently has "+teleporterCharges+" charges left before it needs to recharge!\nWhich setting would you like to activate, fixed or random?");  
                         response = scan.nextLine().trim().toLowerCase();
                         switch (response){
                             case "fixed":
@@ -559,6 +625,7 @@ public class Game
                                 break;
                             case "random":
                                 currentRoom = rooms.get(rng.nextInt(rooms.size()));
+                                System.out.println(currentRoom.getLongDescription());
                                 teleporterCharges--;
                                 break;
                         }
@@ -580,6 +647,28 @@ public class Game
                 System.out.println("You press a few buttons and flip a switch and the elevator turns on! You should now be able to use the elevator.");
                 elevatorOn = true;
                 elevatorDoorOpen = true;
+            }
+        }else if (currentRoom == elevator){
+            if (itemToInteractWith.equals("panel")){
+                System.out.println("Would you like to go to the first or second floor?");
+                String targetFloor = scan.nextLine();
+                switch (targetFloor){
+                    case "first":
+                        rooms.add(currentRoom);
+                        currentRoom = lobby1;
+                        System.out.println(currentRoom.getLongDescription());
+                        break;
+                    case "second":
+                        rooms.add(currentRoom);
+                        currentRoom = lobby2;
+                        System.out.println(currentRoom.getLongDescription());
+                        break;
+                }
+            }
+        }else if (currentRoom == lounge){
+            if (itemToInteractWith.equals("coffeemachine")){
+                System.out.println("You press a few buttons and warm cup of coffee comes out of the machine!");
+                inv.tryToPickUpItem("coffee");
             }
         }else if (currentRoom == coworkerRoom){
             if (itemToInteractWith.equals("desk")){
@@ -603,7 +692,7 @@ public class Game
                     case "paperclip":
                         result = inv.tryToUseItem("paperclip");
                         if (result == true){
-                            System.out.println("You unlocked the drawer with the paperclip!\n You were sucessful in getting the picutre before your coworker could embaress you!");
+                            System.out.println("You unlocked the drawer with the paperclip!\n You were sucessful in getting the picture before your coworker could embaress you!");
                             System.exit(0);
                         }else{
                             System.out.println("You do not have a paperclip!");

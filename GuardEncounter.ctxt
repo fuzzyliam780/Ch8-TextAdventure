@@ -1,12 +1,10 @@
 #BlueJ class context
 comment0.target=GuardEncounter
-comment0.text=\r\n\r\n\ @author\ Liam\r\n
-comment1.params=guard
-comment1.target=GuardEncounter(int)
+comment0.text=\r\n\r\n\ @author\ Liam\ Marquis\r\n\ @version\ 4/15/19\r\n
+comment1.params=
+comment1.target=GuardEncounter()
+comment1.text=\r\n\ controls\ the\ encounter\ with\ guard\ grant\r\n
 comment2.params=
-comment2.target=void\ guardEncounter_Grant()
-comment3.params=
-comment3.target=void\ guardEncounter_Edwards()
-comment4.params=
-comment4.target=void\ guardEncounter_Thomas()
-numComments=5
+comment2.target=boolean\ guardEncounter_Grant()
+comment2.text=\r\n\ Player\ encounters\ guard\ grant\ outside\ of\ the\ main\ offices\r\n\ @return\ Returns\ boolean\ indicating\ whether\ or\ not\ the\ security\ door\ is\ locked\r\n
+numComments=3
