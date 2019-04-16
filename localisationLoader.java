@@ -4,10 +4,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 /**
- * Write a description of class localisationLoader here.
+ * Loads localistation files
+ * currently does not work and is not used
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Liam Marquis
+ * @version 4/15/19
  */
 public class localisationLoader
 {
