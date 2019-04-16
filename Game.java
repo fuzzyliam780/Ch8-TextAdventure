@@ -275,6 +275,10 @@
                         labRoomDoorUnlocked = true;
                         System.out.println(currentRoom.getLongDescription());
                     }
+                }else {
+                    previousRooms.add(currentRoom);
+                    currentRoom = nextRoom;
+                    System.out.println(currentRoom.getLongDescription());
                 }
             }else{
                 ge.guardEncounter_Grant();
@@ -683,7 +687,7 @@
                         case "lasercutter":
                             result = inv.tryToUseItem("laserCutter");
                             if (result == true){
-                                System.out.println("You cut the lock open!\n You were sucessful in getting the picutre before your coworker could embaress you!");
+                                System.out.println("You cut the lock open!\n You were sucessful in getting the picture before your coworker could embaress you!");
                                 System.exit(0);
                         }else{
                             System.out.println("You do not have the LASERcutter!");
@@ -702,7 +706,7 @@
                         result = inv.tryToUseItem("largeExplosive");
                         if (result == true){
                             hasExplosive = false;
-                            System.out.println("You blew up the desk!\n You were sucessful in getting the picutre before your coworker could embaress you!");
+                            System.out.println("You blew up the desk!\n You were sucessful in getting the picture before your coworker could embaress you!");
                             System.exit(0);
                         }else{
                             System.out.println("You do not have the large explosive!");

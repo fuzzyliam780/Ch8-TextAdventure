@@ -9,7 +9,7 @@ public class GuardEncounter {
     Scanner scan = new Scanner(System.in);
     Inventory inv = new Inventory();
     Game game = new Game();
-    boolean isGreetingOver = false, isEncounterOver = false;
+    static boolean isGreetingOver = false, isEncounterOver = false;
     
     /**
      * controls the encounter with guard grant

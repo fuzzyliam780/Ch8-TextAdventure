@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=localisationLoader
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ localisationLoader\ here.\r\n\r\n\ @author\ (your\ name)\r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ Loads\ localistation\ files\r\n\ currently\ does\ not\ work\ and\ is\ not\ used\r\n\r\n\ @author\ Liam\ Marquis\r\n\ @version\ 4/15/19\r\n
 comment1.params=
 comment1.target=localisationLoader()
 comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ localisationLoader\r\n\ Loads\ all\ localisation\ files\r\n
